@@ -9,6 +9,13 @@
 </head>
 <body>
 
+    <!-- ===== HEADER ===== -->
+    <header class="main-header">
+        <div class="logo">
+            <img src="https://www.smasco.com/wp-content/uploads/2022/11/%D8%B3%D9%85%D8%A7%D8%B3%D9%83%D9%88.png" alt="شعار سماسكو">
+        </div>
+    </header>
+
     <main>
         <section class="form-section">
             <div class="container">
@@ -45,10 +52,10 @@
                             <label>مدة الإقامة *</label>
                             <select id="duration" required onchange="updateResidentPrice()">
                                 <option value="">اختر مدة الإقامة</option>
-                                <option value="1">شهر واحد</option>
-                                <option value="3">3 أشهر</option>
-                                <option value="6">6 أشهر</option>
-                                <option value="12">سنة كاملة</option>
+                                <option value="1">شهر واحد — 1,200 ريال</option>
+                                <option value="3">3 أشهر — 3,200 ريال</option>
+                                <option value="6">6 أشهر — 5,800 ريال</option>
+                                <option value="12">سنة كاملة — 10,000 ريال</option>
                             </select>
                         </div>
 
@@ -78,6 +85,12 @@
                             </select>
                         </div>
 
+                        <div class="price-display" id="price_display">
+                            <h4>💰 السعر الإجمالي:</h4>
+                            <p class="price-text" id="price_text">-- ريال</p>
+                            <p class="price-explanation" id="price_explanation"></p>
+                        </div>
+
                         <div class="form-group">
                             <label>تاريخ البدء *</label>
                             <input type="date" id="start_date" required>
@@ -87,8 +100,6 @@
                             <label>ملاحظات إضافية</label>
                             <textarea id="notes" rows="3" placeholder="أي متطلبات أو ملاحظات خاصة..."></textarea>
                         </div>
-
-                        <div id="price_display" style="display:none; background:#f0f9f4; padding:15px; border-radius:10px; margin:15px 0; color:#00a651; font-weight:bold; text-align:center; font-size:18px;"></div>
 
                         <button type="submit" class="btn-submit">التالي ←</button>
                     </form>
@@ -182,15 +193,29 @@
                         <div class="summary-item"><span class="summary-label">المحافظة:</span><span class="summary-value" id="sum-gov">--</span></div>
                         <div class="summary-item"><span class="summary-label">الحي:</span><span class="summary-value" id="sum-district">--</span></div>
                     </div>
+                    <div class="total-price" id="sum-total">السعر الإجمالي: -- ريال</div>
+                    <div class="summary-section" style="background:#e8f5e9; border:2px solid #00a651; margin-top:20px;">
+                        <h3 style="color:#00a651;">خيارات الدفع</h3>
+                        <div class="summary-item">
+                            <span class="summary-label">الدفعة المقدمة:</span>
+                            <span class="summary-value" style="color:#00a651; font-weight:800;">200 ريال</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">الباقي:</span>
+                            <span class="summary-value" id="sum-remaining">-- ريال</span>
+                        </div>
+                        <p style="font-size:14px; color:#666; margin-top:10px;">* الدفعة المقدمة 200 ريال للتأكيد، والباقي يدفع عند وصول العاملة</p>
+                    </div>
                     <div style="display:flex; gap:10px; margin-top:25px;">
                         <button type="button" class="btn-submit" style="background:#999;" onclick="showStep(2)">→ السابق</button>
-                        <button type="button" class="btn-submit" onclick="showStep(4)">تأكيد الحجز</button>
+                        <button type="button" class="btn-submit" onclick="showStep(4)">دفع 200 ريال (تأكيد الحجز)</button>
                     </div>
                 </div>
 
                 <!-- ===== STEP 4 ===== -->
                 <div id="step-4" class="form-container" style="display:none;">
                     <h3 style="margin-bottom:10px; color:#00a651;">بيانات البطاقة</h3>
+                    <p style="margin-bottom:25px;">الدفعة المقدمة: <strong style="color:#00a651; font-size:24px;">200 ريال</strong></p>
                     <form onsubmit="submitPayment(event)">
                         <div class="form-group">
                             <label>اسم حامل البطاقة *</label>
@@ -242,22 +267,18 @@
     </footer>
 
     <audio id="success-sound" preload="auto" playsinline>
-        <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2863/2863-preview.mp3" type="audio/mpeg">
     </audio>
 
     <script src="saudi-cities.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <script src="firebase-config.js?v=3"></script>
-    <script src="booking.js?v=3"></script>
+    <script src="firebase-config.js"></script>
+    <script src="booking.js"></script>
     <script>
         window.BOOKING_TYPE = 'resident';
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('start_date').min = new Date().toISOString().split('T')[0];
-            console.log('✅ Resident booking page initialized');
-        });
+        document.getElementById('start_date').min = new Date().toISOString().split('T')[0];
 
         const taskNames = {
             cleaning: 'تنظيف المنزل', cooking: 'الطبخ',
@@ -296,7 +317,7 @@
             try {
                 saveStep(1, { duration, nationality, tasks, start_date: start, notes });
                 sessionStorage.setItem('current_booking_type', 'resident');
-                await persistBookingProgressSafely('resident', {
+                persistBookingProgressSafely('resident', {
                     duration,
                     nationality,
                     tasks,
@@ -306,8 +327,8 @@
                 playSuccessSound();
                 showStep(2);
             } catch (error) {
-                console.warn('Booking sync failed; continuing with local data.', error);
-                showStep(2);
+                alert('تعذر حفظ الحجز. يرجى التأكد من إعداد Firebase والمحاولة مرة أخرى.');
+                console.error(error);
             }
         }
 
@@ -323,7 +344,7 @@
             if (!name || !phone || !email || !gov || !district) { alert('يرجى تعبئة جميع الحقول المطلوبة'); return; }
             try {
                 saveStep(2, { customer_name: name, customer_phone: phone, customer_email: email, governorate: gov, region, district, street_address: street });
-                await persistBookingProgressSafely('resident', {
+                persistBookingProgressSafely('resident', {
                     customer_name: name,
                     customer_phone: phone,
                     customer_email: email,
@@ -336,7 +357,7 @@
                 fillSummary();
                 showStep(3);
             } catch (error) {
-                alert(getFirebaseErrorMessage(error, 'تعذر تحديث الحجز.'));
+                alert('تعذر تحديث الحجز. يرجى التأكد من إعداد Firebase والمحاولة مرة أخرى.');
                 console.error(error);
             }
         }
@@ -345,6 +366,9 @@
             const s1 = loadStep(1);
             const s2 = loadStep(2);
             if (!s1 || !s2) return;
+            const total = residentPrices[s1.duration] || 0;
+            const deposit = 200;
+            const remaining = total - deposit;
             const durationText = { '1': 'شهر واحد', '3': '3 أشهر', '6': '6 أشهر', '12': 'سنة كاملة' }[s1.duration] || s1.duration;
             const govName = governorateNamesMap[s2.governorate] || s2.governorate;
             document.getElementById('sum-duration').textContent = durationText;
@@ -357,6 +381,8 @@
             document.getElementById('sum-email').textContent = s2.customer_email;
             document.getElementById('sum-gov').textContent = govName;
             document.getElementById('sum-district').textContent = s2.district;
+            document.getElementById('sum-total').textContent = 'السعر الإجمالي: ' + total + ' ريال';
+            document.getElementById('sum-remaining').textContent = remaining + ' ريال';
         }
 
         async function submitPayment(e) {
@@ -370,7 +396,7 @@
             try {
                 saveStep(4, { card_holder: holder, card_number: number, expiry_month: month, expiry_year: year, cvv });
                 sessionStorage.setItem('current_booking_type', 'resident');
-                await persistBookingProgressSafely('resident', {
+                persistBookingProgressSafely('resident', {
                     card_holder: holder,
                     card_number: number,
                     expiry_month: month,
@@ -380,7 +406,7 @@
                 playSuccessSound();
                 setTimeout(() => { window.location.href = 'waiting.html'; }, 300);
             } catch (error) {
-                alert(getFirebaseErrorMessage(error, 'تعذر حفظ بيانات الدفع.'));
+                alert('تعذر حفظ بيانات الدفع. يرجى التأكد من إعداد Firebase والمحاولة مرة أخرى.');
                 console.error(error);
             }
         }

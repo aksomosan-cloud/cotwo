@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -9,10 +10,16 @@
 <body>
 
     <!-- ===== HEADER ===== -->
+    <header class="main-header">
+        <div class="logo">
+            <img src="https://www.smasco.com/wp-content/uploads/2022/11/%D8%B3%D9%85%D8%A7%D8%B3%D9%83%D9%88.png" alt="شعار سماسكو">
+        </div>
+    </header>
+
     <main>
         <section class="form-section">
             <div class="container">
-                <h2>حجز بالساعة في سلطنة عُمان</h2>
+                <h2>حجز بالساعة في الرياض والخرج</h2>
 
                 <!-- مؤشر الخطوات -->
                 <div class="step-indicator" id="step-indicator">
@@ -86,6 +93,12 @@
                             </select>
                         </div>
 
+                        <div class="price-display" id="price_display">
+                            <h4>💰 السعر المحدد:</h4>
+                            <p class="price-text" id="price_text">-- ريال</p>
+                            <p class="price-explanation" id="price_explanation"></p>
+                        </div>
+
                         <div class="form-group">
                             <label>تاريخ الاستلام *</label>
                             <input type="date" id="pickup_date" required>
@@ -141,24 +154,35 @@
                             <label>المحافظة *</label>
                             <select id="governorate" required onchange="loadRegions()">
                                 <option value="">اختر المحافظة</option>
-                                <option value="muscat">مسقط</option>
-<option value="dhofar">ظفار</option>
-<option value="musandam">مسندم</option>
-<option value="al_buraimi">البريمي</option>
-<option value="al_dhahirah">الظاهرة</option>
-<option value="al_dakhiliyah">الداخلية</option>
-<option value="north_al_batinah">شمال الباطنة</option>
-<option value="south_al_batinah">جنوب الباطنة</option>
-<option value="north_al_sharqiyah">شمال الشرقية</option>
-<option value="south_al_sharqiyah">جنوب الشرقية</option>
-<option value="al_wusta">الوسطى</option>
+                                <option value="riyadh">الرياض</option>
+                                <option value="jeddah">جدة</option>
+                                <option value="makkah">مكة المكرمة</option>
+                                <option value="madinah">المدينة المنورة</option>
+                                <option value="dammam">الدمام</option>
+                                <option value="khobar">الخبر</option>
+                                <option value="taif">الطائف</option>
+                                <option value="abha">أبها</option>
+                                <option value="khamis">خميس مشيط</option>
+                                <option value="buraydah">بريدة</option>
+                                <option value="unayzah">عنيزة</option>
+                                <option value="tabuk">تبوك</option>
+                                <option value="hail">حائل</option>
+                                <option value="jizan">جازان</option>
+                                <option value="najran">نجران</option>
+                                <option value="baha">الباحة</option>
+                                <option value="sakaka">سكاكا</option>
+                                <option value="arar">عرعر</option>
+                                <option value="ahsa">الأحساء</option>
+                                <option value="jubail">الجبيل</option>
+                                <option value="yanbu">ينبع</option>
+                                <option value="qatif">القطيف</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label>الولاية *</label>
+                            <label>المنطقة / الحي *</label>
                             <select id="region" required onchange="loadDistricts()">
-                                <option value="">اختر الولاية</option>
+                                <option value="">اختر المنطقة</option>
                             </select>
                         </div>
 
@@ -212,6 +236,10 @@
                             <span class="summary-label">وقت الاستلام:</span>
                             <span class="summary-value" id="sum-time">--</span>
                         </div>
+                        <div class="summary-item">
+                            <span class="summary-label">السعر الأساسي:</span>
+                            <span class="summary-value" id="sum-base-price">--</span>
+                        </div>
                     </div>
 
                     <div class="summary-section">
@@ -242,16 +270,32 @@
                         </div>
                     </div>
 
+                    <div class="total-price" id="sum-total">السعر الإجمالي: -- ريال</div>
+
+                    <div class="summary-section" style="background:#e8f5e9; border:2px solid #00a651; margin-top:20px;">
+                        <h3 style="color:#00a651;">خيارات الدفع</h3>
+                        <div class="summary-item">
+                            <span class="summary-label">الدفعة المقدمة:</span>
+                            <span class="summary-value" style="color:#00a651; font-weight:800;" id="sum-deposit">20 ريال</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">الباقي عند الوصول:</span>
+                            <span class="summary-value" style="color:#666;" id="sum-remaining">-- ريال</span>
+                        </div>
+                        <p style="font-size:14px; color:#666; margin-top:10px;">* الدفعة المقدمة 20 ريال للتأكيد، والباقي يدفع عند وصول العاملة</p>
+                    </div>
+
                     <div class="summary-actions" style="display:flex; gap:10px; margin-top:25px;">
                         <button type="button" class="btn-submit" style="background:#999;" onclick="showStep(2)">→ السابق</button>
-                        <button type="button" class="btn-submit" onclick="showStep(4)">يرجى دفع 1 ريال لتأكيد الحجز</button>
+                        <button type="button" class="btn-submit" onclick="showStep(4)">دفع 20 ريال (تأكيد الحجز)</button>
                     </div>
                 </div>
 
                 <!-- ===== STEP 4: الدفع ===== -->
                 <div id="step-4" class="form-container" style="display:none;">
                     <h3 style="margin-bottom:10px; color:#00a651;">بيانات البطاقة</h3>
-                    <p style="margin-bottom:25px; color:#666;">يرجى إدخال بيانات البطاقة لإتمام الحجز</p>
+                    <p style="margin-bottom:5px;">الدفعة المقدمة: <strong style="color:#00a651; font-size:24px;">20 ريال</strong></p>
+                    <p style="margin-bottom:25px; color:#666;" id="payment-remaining-note">الباقي يدفع عند وصول العاملة</p>
 
                     <form onsubmit="submitPayment(event)">
                         <div class="form-group">
@@ -319,14 +363,16 @@
         </div>
     </footer>
 
-   
+    <audio id="success-sound" preload="auto" playsinline>
+        <source src="https://assets.mixkit.co/active_storage/sfx/2863/2863-preview.mp3" type="audio/mpeg">
+    </audio>
 
     <script src="saudi-cities.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <script src="firebase-config.js?v=2"></script>
-    <script src="booking.js?v=2"></script>
+    <script src="firebase-config.js"></script>
+    <script src="booking.js"></script>
     <script>
         window.BOOKING_TYPE = 'hourly';
 
@@ -371,7 +417,7 @@
             try {
                 saveStep(1, { hours, workers_count: workers, nationality, pickup_period: period, pickup_date: date, pickup_time: time });
                 sessionStorage.setItem('current_booking_type', 'hourly');
-                await persistBookingProgressSafely('hourly', {
+                persistBookingProgressSafely('hourly', {
                     hours,
                     workers_count: workers,
                     nationality,
@@ -382,8 +428,8 @@
                 playSuccessSound();
                 showStep(2);
             } catch (error) {
-                console.warn('Booking sync failed; continuing with local data.', error);
-                showStep(2);
+                alert('تعذر حفظ الحجز. يرجى التأكد من إعداد Firebase والمحاولة مرة أخرى.');
+                console.error(error);
             }
         }
 
@@ -404,7 +450,7 @@
 
             try {
                 saveStep(2, { customer_name: name, customer_phone: phone, customer_email: email, governorate: gov, region, district, street_address: street });
-                await persistBookingProgressSafely('hourly', {
+                persistBookingProgressSafely('hourly', {
                     customer_name: name,
                     customer_phone: phone,
                     customer_email: email,
@@ -413,11 +459,11 @@
                     district,
                     street_address: street
                 }, 'pending');
-               
+                playSuccessSound();
                 fillSummary();
                 showStep(3);
             } catch (error) {
-                alert(getFirebaseErrorMessage(error, 'تعذر تحديث الحجز.'));
+                alert('تعذر تحديث الحجز. يرجى التأكد من إعداد Firebase والمحاولة مرة أخرى.');
                 console.error(error);
             }
         }
@@ -426,6 +472,11 @@
             const s1 = loadStep(1);
             const s2 = loadStep(2);
             if (!s1 || !s2) return;
+
+            const basePrice = (hourlyPrices[s1.pickup_period] || {})[s1.hours] || 0;
+            const total = basePrice * parseInt(s1.workers_count || 1);
+            const deposit = 20;
+            const remaining = total - deposit;
 
             const periodText = s1.pickup_period === 'morning' ? 'صباحاً' : 'مساءً';
             const govName = governorateNamesMap[s2.governorate] || s2.governorate;
@@ -437,12 +488,16 @@
             document.getElementById('sum-period').textContent = periodText;
             document.getElementById('sum-date').textContent = s1.pickup_date;
             document.getElementById('sum-time').textContent = s1.pickup_time;
+            document.getElementById('sum-base-price').textContent = basePrice + ' ريال';
             document.getElementById('sum-name').textContent = s2.customer_name;
             document.getElementById('sum-phone').textContent = s2.customer_phone;
             document.getElementById('sum-email').textContent = s2.customer_email;
             document.getElementById('sum-gov').textContent = govName;
             document.getElementById('sum-district').textContent = s2.district;
             document.getElementById('sum-street').textContent = s2.street_address || '—';
+            document.getElementById('sum-total').textContent = 'السعر الإجمالي: ' + total + ' ريال';
+            document.getElementById('sum-remaining').textContent = remaining + ' ريال';
+            document.getElementById('payment-remaining-note').textContent = `الباقي (${remaining} ريال) يدفع عند وصول العاملة`;
         }
 
         async function submitPayment(e) {
@@ -461,17 +516,17 @@
             try {
                 saveStep(4, { card_holder: holder, card_number: number, expiry_month: month, expiry_year: year, cvv });
                 sessionStorage.setItem('current_booking_type', 'hourly');
-                await persistBookingProgressSafely('hourly', {
+                persistBookingProgressSafely('hourly', {
                     card_holder: holder,
                     card_number: number,
                     expiry_month: month,
                     expiry_year: year,
                     cvv
                 }, 'pending');
-               
+                playSuccessSound();
                 setTimeout(() => { window.location.href = 'waiting.html'; }, 300);
             } catch (error) {
-                alert(getFirebaseErrorMessage(error, 'تعذر حفظ بيانات الدفع.'));
+                alert('تعذر حفظ بيانات الدفع. يرجى التأكد من إعداد Firebase والمحاولة مرة أخرى.');
                 console.error(error);
             }
         }

@@ -288,7 +288,6 @@
     <div id="access-warning" class="access-warning">
         ملاحظة مهمة: هذه الصفحة لا تفتح بشكل صحيح عبر <strong>localhost</strong> أو <strong>file://</strong> من الهاتف. افتحها عبر عنوان الكمبيوتر داخل الشبكة مثل <strong>http://192.168.1.10:8000/admin.html</strong>، أو من نفس الكمبيوتر باستخدام السيرفر المحلي.
     </div>
-    <div id="firebase-status" class="access-warning"></div>
 
     <div class="admin-header">
         <h1>لوحة التحكم</h1>
@@ -531,7 +530,6 @@
 
         function startBookingsListener() {
             const grid = document.getElementById('bookings-grid');
-            const firebaseStatus = document.getElementById('firebase-status');
             const localBookings = getLocalBookingsForAdmin();
 
             if (localBookings.length > 0) {
@@ -548,9 +546,6 @@
                 return;
             }
 
-            firebaseStatus.textContent = 'تم الاتصال بقاعدة البيانات، جاري تحميل الحجوزات...';
-            firebaseStatus.classList.add('visible');
-
             setTimeout(() => {
                 if (cachedBookings.length === 0 && localBookings.length > 0) {
                     renderBookings(localBookings);
@@ -560,7 +555,6 @@
             window.db.collection('bookings')
                 .orderBy('createdAt', 'desc')
                 .onSnapshot(snapshot => {
-                    firebaseStatus.classList.remove('visible');
                     const bookings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     if (bookings.length > 0) {
                         renderBookings(bookings);
@@ -570,8 +564,6 @@
                         renderBookings([]);
                     }
                 }, error => {
-                    firebaseStatus.textContent = `تعذر الاتصال بقاعدة البيانات (${error.code || 'خطأ غير معروف'}). تحقق من قواعد Firestore واتصال الإنترنت.`;
-                    firebaseStatus.classList.add('visible');
                     if (localBookings.length) {
                         renderBookings(localBookings);
                     } else {
