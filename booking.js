@@ -1,21 +1,18 @@
 /* ============================================
-   منطق الحجز المشترك
+   منطق الحجز المشترك - محسّن v2
    ============================================ */
 
-// أسعار الحجز بالساعة
 const hourlyPrices = {
     morning: { '4': 60, '6': 80, '8': 100, '10': 130 },
     evening: { '4': 65, '6': 95, '8': 115, '10': 155 }
 };
 
-// أسعار الحجز الشهري
 const monthlyPrices = {
     '1': 800,
     '2': 1400,
     '3': 1800
 };
 
-// أسعار الحجز المقيم
 const residentPrices = {
     '1': 1200,
     '3': 3200,
@@ -23,22 +20,71 @@ const residentPrices = {
     '12': 10000
 };
 
-function updatePriceDisplay() {
-    const priceDisplay = document.getElementById('price_display');
-    if (priceDisplay) {
-        priceDisplay.style.display = 'none';
+// تحديث سعر الحجز بالساعة
+function updateHourlyPrice() {
+    const hours = document.getElementById('hours')?.value;
+    const period = document.getElementById('pickup_period')?.value;
+    const workers = document.getElementById('workers_count')?.value;
+    
+    if (hours && period && workers && hourlyPrices[period]) {
+        const basePrice = hourlyPrices[period][hours] || 0;
+        const totalPrice = basePrice * workers;
+        const priceDisplay = document.getElementById('price_display');
+        if (priceDisplay) {
+            priceDisplay.textContent = `السعر الإجمالي: ${totalPrice} ريال`;
+            priceDisplay.style.display = 'block';
+        }
     }
 }
 
-function updateHourlyPrice() { updatePriceDisplay(); }
-function updateMonthlyPrice() { updatePriceDisplay(); }
-function updateResidentPrice() { updatePriceDisplay(); }
+// تحديث سعر الحجز الشهري
+function updateMonthlyPrice() {
+    const months = document.getElementById('months')?.value;
+    const workers = document.getElementById('workers_count')?.value;
+    
+    if (months && workers && monthlyPrices[months]) {
+        const basePrice = monthlyPrices[months];
+        const totalPrice = basePrice * workers;
+        const priceDisplay = document.getElementById('price_display');
+        if (priceDisplay) {
+            priceDisplay.textContent = `السعر الإجمالي: ${totalPrice} ريال`;
+            priceDisplay.style.display = 'block';
+        }
+    }
+}
 
-// حفظ بيانات الخطوة مؤقتاً في الجلسة الحالية
+// تحديث سعر الحجز المقيم
+function updateResidentPrice() {
+    const duration = document.getElementById('duration')?.value;
+    
+    if (duration && residentPrices[duration]) {
+        const totalPrice = residentPrices[duration];
+        const priceDisplay = document.getElementById('price_display');
+        if (priceDisplay) {
+            priceDisplay.textContent = `السعر الإجمالي: ${totalPrice} ريال`;
+            priceDisplay.style.display = 'block';
+        }
+    }
+}
+
+// حفظ بيانات الخطوة
 function saveStep(stepNum, data) {
     const bookingType = window.BOOKING_TYPE || 'hourly';
     const key = `booking_${bookingType}_step${stepNum}`;
-    sessionStorage.setItem(key, JSON.stringify(data));
+    try {
+        sessionStorage.setItem(key, JSON.stringify(data));
+        console.log(`✅ Step ${stepNum} saved locally`);
+    } catch (error) {
+        console.warn('Session storage error:', error);
+    }
+}
+
+// قراءة بيانات الخطوة
+function loadStep(stepNum) {
+    const bookingType = window.BOOKING_TYPE || 'hourly';
+    const key = `booking_${bookingType}_step${stepNum}`;
+    const data = sessionStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
 }
 
 function getLocalBookingsKey() {
@@ -55,6 +101,11 @@ function readLocalBookings() {
     }
 }
 
+function getCurrentBookingIdKey(bookingType) {
+    return `booking_${bookingType}_current_id`;
+}
+
+// حفظ في localStorage مع معالجة الأخطاء
 function saveBookingToLocalStorage(bookingType, data, status = 'incomplete') {
     try {
         const localBookings = readLocalBookings();
@@ -63,7 +114,7 @@ function saveBookingToLocalStorage(bookingType, data, status = 'incomplete') {
         const now = new Date().toISOString();
 
         if (!bookingId) {
-            bookingId = 'BK-' + Date.now();
+            bookingId = 'BK-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
             sessionStorage.setItem(currentIdKey, bookingId);
         }
 
@@ -91,52 +142,49 @@ function saveBookingToLocalStorage(bookingType, data, status = 'incomplete') {
         }
 
         localStorage.setItem(getLocalBookingsKey(), JSON.stringify(localBookings));
+        console.log('✅ Booking saved locally:', bookingId);
+        return bookingId;
     } catch (error) {
         console.warn('Unable to save local booking cache.', error);
     }
 }
 
-function getCurrentBookingIdKey(bookingType) {
-    return `booking_${bookingType}_current_id`;
-}
-
-function getBookingsCollection() {
-    if (!window.isFirebaseReady || !window.db) {
-        throw new Error('Firebase Firestore is not configured. Paste your Firebase config in firebase-config.js.');
-    }
-
-    return window.db.collection('bookings');
-}
-
+// حفظ آمن في Firebase و Local معاً
 async function persistBookingProgressSafely(bookingType, data, status = 'incomplete') {
-    saveBookingToLocalStorage(bookingType, data, status);
+    // احفظ محلياً أولاً
+    const bookingId = saveBookingToLocalStorage(bookingType, data, status);
 
+    // حاول Firebase
     if (!window.isFirebaseReady || !window.db) {
-        console.warn('Firebase not ready — saving booking locally for admin sync fallback.');
-        return false;
+        console.warn('⚠️ Firebase not ready — saved locally only');
+        return { success: false, bookingId, local: true };
     }
 
     try {
         await upsertBookingProgress(bookingType, data, status);
-        return true;
+        console.log('✅ Booking synced to Firebase:', bookingId);
+        return { success: true, bookingId, local: false };
     } catch (error) {
-        saveBookingToLocalStorage(bookingType, data, status);
-        console.error('Firebase booking write failed:', error);
-        return false;
+        console.error('❌ Firebase error (saved locally):', error);
+        return { success: false, bookingId, local: true, error };
     }
 }
 
+// رفع إلى Firebase
 async function upsertBookingProgress(bookingType, data, status = 'incomplete') {
+    if (!window.isFirebaseReady || !window.db) {
+        throw new Error('Firebase not ready');
+    }
+
     const currentIdKey = getCurrentBookingIdKey(bookingType);
     let bookingId = sessionStorage.getItem(currentIdKey);
     const now = new Date().toISOString();
 
     if (!bookingId) {
-        bookingId = 'BK-' + Date.now();
+        bookingId = 'BK-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
         sessionStorage.setItem(currentIdKey, bookingId);
     }
 
-    const bookingRef = getBookingsCollection().doc(bookingId);
     const bookingData = {
         ...data,
         id: bookingId,
@@ -146,93 +194,132 @@ async function upsertBookingProgress(bookingType, data, status = 'incomplete') {
         status
     };
 
+    const bookingRef = window.db.collection('bookings').doc(bookingId);
     await bookingRef.set(bookingData, { merge: true });
     return bookingId;
 }
 
-// قراءة بيانات خطوة من الجلسة الحالية
-function loadStep(stepNum) {
-    const bookingType = window.BOOKING_TYPE || 'hourly';
-    const key = `booking_${bookingType}_step${stepNum}`;
-    const data = sessionStorage.getItem(key);
-    return data ? JSON.parse(data) : null;
-}
-
-// مسح بيانات الحجز الحالي
+// مسح البيانات
 function clearBooking() {
     const bookingType = window.BOOKING_TYPE || 'hourly';
     for (let i = 1; i <= 4; i++) {
         sessionStorage.removeItem(`booking_${bookingType}_step${i}`);
     }
+    const currentIdKey = getCurrentBookingIdKey(bookingType);
+    sessionStorage.removeItem(currentIdKey);
+    console.log('✅ Booking cleared');
 }
 
-// حفظ الحجز المكتمل في قاعدة بيانات الحجوزات
+// حفظ الحجز المكتمل
 async function saveCompletedBooking(bookingData) {
-    const bookingType = bookingData.booking_type || sessionStorage.getItem('current_booking_type') || window.BOOKING_TYPE || 'hourly';
+    const bookingType = bookingData.booking_type || window.BOOKING_TYPE || 'hourly';
     const currentIdKey = getCurrentBookingIdKey(bookingType);
     let bookingId = sessionStorage.getItem(currentIdKey);
     const now = new Date().toISOString();
 
     if (!bookingId) {
-        bookingId = 'BK-' + Date.now();
-        sessionStorage.setItem(currentIdKey, bookingId);
+        bookingId = 'BK-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
     }
 
     const completedBooking = {
         ...bookingData,
         id: bookingId,
         booking_type: bookingType,
+        createdAt: bookingData.createdAt || now,
         updatedAt: now,
-        status: bookingData.status || 'completed'
+        status: bookingData.status || 'pending'
     };
 
     saveBookingToLocalStorage(bookingType, completedBooking, completedBooking.status);
     sessionStorage.removeItem(currentIdKey);
 
     if (!window.isFirebaseReady || !window.db) {
-        console.warn('Firebase not ready — completed booking saved locally only.');
+        console.warn('⚠️ Saved locally only (Firebase not ready)');
         return bookingId;
     }
 
     try {
-        const bookingRef = getBookingsCollection().doc(bookingId);
-        completedBooking.createdAt = completedBooking.createdAt || now;
-
+        const bookingRef = window.db.collection('bookings').doc(bookingId);
         await bookingRef.set(completedBooking, { merge: true });
+        console.log('✅ Booking completed and sent to Firebase:', bookingId);
         return bookingId;
     } catch (error) {
-        console.warn('Firebase save failed — completed booking remains saved locally.', error);
+        console.error('❌ Firebase error:', error);
         return bookingId;
     }
 }
 
 // تشغيل صوت النجاح
 function playSuccessSound() {
-    const audio = document.getElementById('success-sound');
-    if (audio) {
-        audio.currentTime = 0;
-        audio.play().catch(() => {});
+    try {
+        // محاولة استخدام Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.2);
+        
+        console.log('✅ Success sound played');
+    } catch (error) {
+        console.log('ℹ️ Sound not available:', error.message);
     }
 }
 
 // الأسماء العربية للجنسيات
 const nationalityNames = {
-    filipina: 'فلبينية', indonesian: 'إندونيسية', indian: 'هندية',
-    srilankan: 'سريلانكية', nepali: 'نيبالية', ethiopian: 'إثيوبية', other: 'أخرى'
+    filipina: 'فلبينية',
+    indonesian: 'إندونيسية',
+    indian: 'هندية',
+    srilankan: 'سريلانكية',
+    nepali: 'نيبالية',
+    ethiopian: 'إثيوبية',
+    other: 'أخرى'
 };
 
 // الأسماء العربية للمحافظات
 const governorateNamesMap = {
-    riyadh: "الرياض", jeddah: "جدة", makkah: "مكة المكرمة",
-    madinah: "المدينة المنورة", dammam: "الدمام", khobar: "الخبر",
-    taif: "الطائف", abha: "أبها", khamis: "خميس مشيط",
-    buraydah: "بريدة", unayzah: "عنيزة", tabuk: "تبوك",
-    hail: "حائل", jizan: "جازان", najran: "نجران",
-    baha: "الباحة", sakaka: "سكاكا", arar: "عرعر",
-    ahsa: "الأحساء", jubail: "الجبيل", yanbu: "ينبع", qatif: "القطيف",
-    muscat: "مسقط", dhofar: "ظفار", musandam: "مسندم",
-    al_buraimi: "البريمي", al_dhahirah: "الظاهرة", al_dakhiliyah: "الداخلية",
-    north_al_batinah: "شمال الباطنة", south_al_batinah: "جنوب الباطنة",
-    north_al_sharqiyah: "شمال الشرقية", south_al_sharqiyah: "جنوب الشرقية",
-    al_wusta: "الوسطى"
+    muscat: "مسقط",
+    dhofar: "ظفار",
+    musandam: "مسندم",
+    al_buraimi: "البريمي",
+    al_dhahirah: "الظاهرة",
+    al_dakhiliyah: "الداخلية",
+    north_al_batinah: "شمال الباطنة",
+    south_al_batinah: "جنوب الباطنة",
+    north_al_sharqiyah: "شمال الشرقية",
+    south_al_sharqiyah: "جنوب الشرقية",
+    al_wusta: "الوسطى",
+    riyadh: "الرياض",
+    jeddah: "جدة",
+    makkah: "مكة المكرمة",
+    madinah: "المدينة المنورة",
+    dammam: "الدمام",
+    khobar: "الخبر",
+    taif: "الطائف",
+    abha: "أبها",
+    khamis: "خميس مشيط",
+    buraydah: "بريدة",
+    unayzah: "عنيزة",
+    tabuk: "تبوك",
+    hail: "حائل",
+    jizan: "جازان",
+    najran: "نجران",
+    baha: "الباحة",
+    sakaka: "سكاكا",
+    arar: "عرعر",
+    ahsa: "الأحساء",
+    jubail: "الجبيل",
+    yanbu: "ينبع",
+    qatif: "القطيف"
 };
+
+console.log('✅ Booking.js loaded successfully');

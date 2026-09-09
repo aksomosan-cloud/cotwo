@@ -1,3 +1,5 @@
+// firebase-config.js - Firebase Configuration
+
 const firebaseConfig = {
     apiKey: "AIzaSyCvBU3NS8MaP1HFlufrRBfWY07vIFgup_o",
     authDomain: "smac-6951a.firebaseapp.com",
@@ -22,22 +24,58 @@ window.isFirebaseReady = false;
 window.db = null;
 window.analytics = null;
 
-if (window.firebase && isFirebaseConfigReady(firebaseConfig)) {
-    firebase.initializeApp(firebaseConfig);
-
-    if (typeof firebase.firestore === "function") {
-        window.db = firebase.firestore();
-        window.db.settings({ experimentalAutoDetectLongPolling: true });
+// دالة التهيئة الآمنة
+function initializeFirebase() {
+    if (typeof firebase === 'undefined') {
+        console.warn('⏳ Firebase SDK still loading...');
+        setTimeout(initializeFirebase, 300);
+        return;
     }
 
-    if (typeof firebase.analytics === "function") {
-        window.analytics = firebase.analytics();
+    if (firebase.apps && firebase.apps.length > 0) {
+        console.log('✅ Firebase already initialized');
+        window.isFirebaseReady = true;
+        if (typeof firebase.firestore === "function") {
+            window.db = firebase.firestore();
+            window.db.settings({ 
+                experimentalAutoDetectLongPolling: true,
+                ignoreUndefinedProperties: true 
+            });
+        }
+        return;
     }
 
-    window.isFirebaseReady = true;
-} else {
-    console.warn("Firebase is not configured yet. Paste your Firebase web app config in firebase-config.js.");
+    if (!isFirebaseConfigReady(firebaseConfig)) {
+        console.warn('⚠️ Firebase config incomplete');
+        return;
+    }
+
+    try {
+        firebase.initializeApp(firebaseConfig);
+        console.log('✅ Firebase initialized successfully');
+
+        if (typeof firebase.firestore === "function") {
+            window.db = firebase.firestore();
+            window.db.settings({ 
+                experimentalAutoDetectLongPolling: true,
+                ignoreUndefinedProperties: true 
+            });
+            console.log('✅ Firestore ready');
+        }
+
+        if (typeof firebase.analytics === "function") {
+            window.analytics = firebase.analytics();
+        }
+
+        window.isFirebaseReady = true;
+    } catch (error) {
+        console.error('❌ Firebase initialization error:', error);
+        setTimeout(initializeFirebase, 1000);
+    }
 }
+
+// ابدأ بعد تأخير بسيط
+setTimeout(initializeFirebase, 500);
 
 window.getFirebaseErrorMessage = function (error, fallback) {
     const code = error && error.code ? error.code : 'unknown-error';

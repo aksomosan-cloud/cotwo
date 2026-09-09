@@ -9,7 +9,6 @@
 </head>
 <body>
 
-    <!-- ===== HEADER ===== -->
     <main>
         <section class="form-section">
             <div class="container">
@@ -88,6 +87,8 @@
                             <label>ملاحظات إضافية</label>
                             <textarea id="notes" rows="3" placeholder="أي متطلبات أو ملاحظات خاصة..."></textarea>
                         </div>
+
+                        <div id="price_display" style="display:none; background:#f0f9f4; padding:15px; border-radius:10px; margin:15px 0; color:#00a651; font-weight:bold; text-align:center; font-size:18px;"></div>
 
                         <button type="submit" class="btn-submit">التالي ←</button>
                     </form>
@@ -240,15 +241,23 @@
         </div>
     </footer>
 
+    <audio id="success-sound" preload="auto" playsinline>
+        <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
+    </audio>
+
     <script src="saudi-cities.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <script src="firebase-config.js?v=2"></script>
-    <script src="booking.js?v=2"></script>
+    <script src="firebase-config.js?v=3"></script>
+    <script src="booking.js?v=3"></script>
     <script>
         window.BOOKING_TYPE = 'resident';
-        document.getElementById('start_date').min = new Date().toISOString().split('T')[0];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('start_date').min = new Date().toISOString().split('T')[0];
+            console.log('✅ Resident booking page initialized');
+        });
 
         const taskNames = {
             cleaning: 'تنظيف المنزل', cooking: 'الطبخ',

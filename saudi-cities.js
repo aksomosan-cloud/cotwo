@@ -1,198 +1,267 @@
-/* ============================================
-  /* ============================================
-   بيانات المدن والولايات والأحياء في سلطنة عُمان
-   ============================================ */
+// saudi-cities.js - بيانات المحافظات والمناطق
 
-const omanCities = {
+const citiesData = {
     muscat: {
-        name: "مسقط",
-        districts: [
-            "بوشر",
-            "الخوض",
-            "المعبيلة",
-            "السيب",
-            "الموالح",
-            "الحيل",
-            "العامرات",
-            "مطرح",
-            "القرم",
-            "مدينة السلطان قابوس",
-            "العذيبة",
-            "الغبرة"
-        ]
+        name: 'مسقط',
+        regions: {
+            'muscat_capital': 'مسقط (العاصمة)',
+            'qurayyat': 'القريات',
+            'amerat': 'العميرات'
+        }
     },
-
     dhofar: {
-        name: "ظفار",
-        districts: [
-            "صلالة",
-            "السعادة",
-            "عوقد",
-            "الحافة",
-            "الدهاريز",
-            "صحلنوت",
-            "ريسوت",
-            "طاقة",
-            "مرباط"
-        ]
+        name: 'ظفار',
+        regions: {
+            'salalah': 'صلالة',
+            'thumrait': 'ثمريت',
+            'mirbat': 'مرباط'
+        }
     },
-
     musandam: {
-        name: "مسندم",
-        districts: [
-            "خصب",
-            "بخاء",
-            "دبا",
-            "مدحاء"
-        ]
+        name: 'مسندم',
+        regions: {
+            'khasab': 'خصب',
+            'dibba': 'دبا'
+        }
     },
-
     al_buraimi: {
-        name: "البريمي",
-        districts: [
-            "البريمي",
-            "محضة",
-            "السنينة"
-        ]
+        name: 'البريمي',
+        regions: {
+            'buraimi': 'البريمي',
+            'mahadah': 'محضة'
+        }
     },
-
     al_dhahirah: {
-        name: "الظاهرة",
-        districts: [
-            "عبري",
-            "ينقل",
-            "ضنك"
-        ]
+        name: 'الظاهرة',
+        regions: {
+            'ibra': 'إبراء',
+            'ibri': 'إبري',
+            'yanqul': 'ينقل'
+        }
     },
-
     al_dakhiliyah: {
-        name: "الداخلية",
-        districts: [
-            "نزوى",
-            "بهلاء",
-            "الحمراء",
-            "منح",
-            "إزكي",
-            "سمائل",
-            "بدبد",
-            "أدم"
-        ]
+        name: 'الداخلية',
+        regions: {
+            'nizwa': 'نزوى',
+            'izki': 'إزكي',
+            'bahla': 'بهلاء',
+            'manah': 'المناح'
+        }
     },
-
     north_al_batinah: {
-        name: "شمال الباطنة",
-        districts: [
-            "صحار",
-            "شناص",
-            "لوى",
-            "صحم",
-            "الخابورة",
-            "السويق"
-        ]
+        name: 'شمال الباطنة',
+        regions: {
+            'sohar': 'صحار',
+            'shinas': 'شناص',
+            'liwa': 'ليوا'
+        }
     },
-
     south_al_batinah: {
-        name: "جنوب الباطنة",
-        districts: [
-            "الرستاق",
-            "العوابي",
-            "نخل",
-            "وادي المعاول",
-            "بركاء",
-            "المصنعة"
-        ]
+        name: 'جنوب الباطنة',
+        regions: {
+            'rustaq': 'الرستاق',
+            'nakhal': 'نخل',
+            'awabi': 'العوابي'
+        }
     },
-
     north_al_sharqiyah: {
-        name: "شمال الشرقية",
-        districts: [
-            "إبراء",
-            "المضيبي",
-            "بدية",
-            "القابل",
-            "وادي بني خالد",
-            "دماء والطائيين"
-        ]
+        name: 'شمال الشرقية',
+        regions: {
+            'sur': 'صور',
+            'qalhat': 'قلهات'
+        }
     },
-
     south_al_sharqiyah: {
-        name: "جنوب الشرقية",
-        districts: [
-            "صور",
-            "جعلان بني بو حسن",
-            "جعلان بني بو علي",
-            "الكامل والوافي",
-            "مصيرة"
-        ]
+        name: 'جنوب الشرقية',
+        regions: {
+            'ibra_south': 'إبراء',
+            'jalan': 'الجالين'
+        }
     },
-
     al_wusta: {
-        name: "الوسطى",
-        districts: [
-            "هيماء",
-            "محوت",
-            "الدقم",
-            "الجازر"
-        ]
+        name: 'الوسطى',
+        regions: {
+            'haima': 'الحيمة',
+            'duqm': 'دقم'
+        }
+    },
+    riyadh: {
+        name: 'الرياض',
+        regions: {
+            'riyadh_center': 'وسط الرياض',
+            'riyadh_north': 'شمال الرياض',
+            'riyadh_south': 'جنوب الرياض',
+            'riyadh_east': 'شرق الرياض',
+            'riyadh_west': 'غرب الرياض'
+        }
+    },
+    jeddah: {
+        name: 'جدة',
+        regions: {
+            'balad': 'البلد',
+            'obhur': 'أبحر',
+            'khaleej': 'الخليج',
+            'corniche': 'الكورنيش'
+        }
+    },
+    makkah: {
+        name: 'مكة المكرمة',
+        regions: {
+            'makkah_center': 'وسط مكة',
+            'abraj': 'أبراج',
+            'aziziyah': 'العزيزية'
+        }
+    },
+    madinah: {
+        name: 'المدينة المنورة',
+        regions: {
+            'madinah_center': 'وسط المدينة',
+            'quba': 'قباء'
+        }
+    },
+    dammam: {
+        name: 'الدمام',
+        regions: {
+            'dammam_center': 'وسط الدمام',
+            'khobar': 'الخبر'
+        }
+    },
+    khobar: {
+        name: 'الخبر',
+        regions: {
+            'khobar_center': 'وسط الخبر',
+            'khobar_corniche': 'كورنيش الخبر'
+        }
+    },
+    taif: {
+        name: 'الطائف',
+        regions: {
+            'taif_center': 'وسط الطائف',
+            'shafa': 'الشفا'
+        }
+    },
+    abha: {
+        name: 'أبها',
+        regions: {
+            'abha_center': 'وسط أبها',
+            'asir': 'عسير'
+        }
+    },
+    khamis: {
+        name: 'خميس مشيط',
+        regions: {
+            'khamis_center': 'وسط خميس',
+            'muhayil': 'محايل'
+        }
+    },
+    buraydah: {
+        name: 'بريدة',
+        regions: {
+            'buraydah_center': 'وسط بريدة'
+        }
+    },
+    unayzah: {
+        name: 'عنيزة',
+        regions: {
+            'unayzah_center': 'وسط عنيزة'
+        }
+    },
+    tabuk: {
+        name: 'تبوك',
+        regions: {
+            'tabuk_center': 'وسط تبوك'
+        }
+    },
+    hail: {
+        name: 'حائل',
+        regions: {
+            'hail_center': 'وسط حائل'
+        }
+    },
+    jizan: {
+        name: 'جازان',
+        regions: {
+            'jizan_center': 'وسط جازان'
+        }
+    },
+    najran: {
+        name: 'نجران',
+        regions: {
+            'najran_center': 'وسط نجران'
+        }
+    },
+    baha: {
+        name: 'الباحة',
+        regions: {
+            'baha_center': 'وسط الباحة'
+        }
+    },
+    sakaka: {
+        name: 'سكاكا',
+        regions: {
+            'sakaka_center': 'وسط سكاكا'
+        }
+    },
+    arar: {
+        name: 'عرعر',
+        regions: {
+            'arar_center': 'وسط عرعر'
+        }
+    },
+    ahsa: {
+        name: 'الأحساء',
+        regions: {
+            'ahsa_center': 'وسط الأحساء',
+            'hofuf': 'الهفوف'
+        }
+    },
+    jubail: {
+        name: 'الجبيل',
+        regions: {
+            'jubail_center': 'وسط الجبيل'
+        }
+    },
+    yanbu: {
+        name: 'ينبع',
+        regions: {
+            'yanbu_center': 'وسط ينبع'
+        }
+    },
+    qatif: {
+        name: 'القطيف',
+        regions: {
+            'qatif_center': 'وسط القطيف'
+        }
     }
 };
 
-
-/* ============================================
-   أسماء محافظات سلطنة عُمان
-   ============================================ */
-
-const governorateNames = {
-    muscat: "مسقط",
-    dhofar: "ظفار",
-    musandam: "مسندم",
-    al_buraimi: "البريمي",
-    al_dhahirah: "الظاهرة",
-    al_dakhiliyah: "الداخلية",
-    north_al_batinah: "شمال الباطنة",
-    south_al_batinah: "جنوب الباطنة",
-    north_al_sharqiyah: "شمال الشرقية",
-    south_al_sharqiyah: "جنوب الشرقية",
-    al_wusta: "الوسطى"
-};
-
-
-/* ============================================
-   تحميل الولايات والمناطق
-   ============================================ */
-
+// تحميل المناطق عند اختيار محافظة
 function loadRegions() {
-    const governorateSelect = document.getElementById('governorate');
+    const govSelect = document.getElementById('governorate');
     const regionSelect = document.getElementById('region');
-    const districtInput = document.getElementById('district');
+    const gov = govSelect.value;
 
-    const selectedGovernorate = governorateSelect.value;
+    regionSelect.innerHTML = '<option value="">اختر المنطقة</option>';
 
-    regionSelect.innerHTML = '<option value="">اختر الولاية</option>';
-    districtInput.value = '';
-
-    if (selectedGovernorate && omanCities[selectedGovernorate]) {
-        omanCities[selectedGovernorate].districts.forEach(district => {
+    if (gov && citiesData[gov]) {
+        const regions = citiesData[gov].regions;
+        for (const [key, name] of Object.entries(regions)) {
             const option = document.createElement('option');
-
-            option.value = district;
-            option.textContent = district;
-
+            option.value = key;
+            option.textContent = name;
             regionSelect.appendChild(option);
-        });
+        }
+        console.log('✅ Regions loaded for:', gov);
+    } else {
+        console.warn('⚠️ No regions found for:', gov);
     }
+
+    // مسح حقل الحي
+    const districtInput = document.getElementById('district');
+    if (districtInput) districtInput.value = '';
 }
 
-
-/* ============================================
-   اختيار الحي
-   ============================================ */
-
+// تحميل الأحياء (حقل مفتوح في حالتنا)
 function loadDistricts() {
-    const regionSelect = document.getElementById('region');
-    const districtInput = document.getElementById('district');
-
-    if (regionSelect.value) {
-        districtInput.value = regionSelect.value;
-    }
+    console.log('✅ District field ready for input');
 }
