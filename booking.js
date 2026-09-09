@@ -136,18 +136,14 @@ async function upsertBookingProgress(bookingType, data, status = 'incomplete') {
     }
 
     const bookingRef = getBookingsCollection().doc(bookingId);
-    const existingBooking = await bookingRef.get();
     const bookingData = {
         ...data,
         id: bookingId,
         booking_type: bookingType,
+        createdAt: now,
         updatedAt: now,
         status
     };
-
-    if (!existingBooking.exists) {
-        bookingData.createdAt = now;
-    }
 
     await bookingRef.set(bookingData, { merge: true });
     return bookingId;
@@ -199,11 +195,7 @@ async function saveCompletedBooking(bookingData) {
 
     try {
         const bookingRef = getBookingsCollection().doc(bookingId);
-        const existingBooking = await bookingRef.get();
-
-        if (!existingBooking.exists) {
-            completedBooking.createdAt = now;
-        }
+        completedBooking.createdAt = completedBooking.createdAt || now;
 
         await bookingRef.set(completedBooking, { merge: true });
         return bookingId;
