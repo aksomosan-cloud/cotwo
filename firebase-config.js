@@ -1,4 +1,4 @@
-// firebase-config.js - Firebase Configuration
+// firebase-config.js - Firebase Configuration (Fixed)
 
 const firebaseConfig = {
     apiKey: "AIzaSyCvBU3NS8MaP1HFlufrRBfWY07vIFgup_o",
@@ -32,14 +32,18 @@ function initializeFirebase() {
         return;
     }
 
+    // تحقق إذا كان Firebase مهيأ بالفعل
     if (firebase.apps && firebase.apps.length > 0) {
         console.log('✅ Firebase already initialized');
         window.isFirebaseReady = true;
+        
         if (typeof firebase.firestore === "function") {
             window.db = firebase.firestore();
+            // ✅ إصلاح المشكلة: استخدم merge: true
             window.db.settings({ 
                 experimentalAutoDetectLongPolling: true,
-                ignoreUndefinedProperties: true 
+                ignoreUndefinedProperties: true,
+                merge: true  // ✅ هنا الحل
             });
         }
         return;
@@ -56,9 +60,11 @@ function initializeFirebase() {
 
         if (typeof firebase.firestore === "function") {
             window.db = firebase.firestore();
+            // ✅ إصلاح المشكلة: استخدم merge: true
             window.db.settings({ 
                 experimentalAutoDetectLongPolling: true,
-                ignoreUndefinedProperties: true 
+                ignoreUndefinedProperties: true,
+                merge: true  // ✅ هنا الحل
             });
             console.log('✅ Firestore ready');
         }
