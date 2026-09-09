@@ -382,7 +382,7 @@
                 playSuccessSound();
                 showStep(2);
             } catch (error) {
-                alert('تعذر حفظ الحجز. يرجى التأكد من إعداد Firebase والمحاولة مرة أخرى.');
+                alert(getFirebaseErrorMessage(error, 'تعذر حفظ الحجز.'));
                 console.error(error);
             }
         }
@@ -417,7 +417,7 @@
                 fillSummary();
                 showStep(3);
             } catch (error) {
-                alert('تعذر تحديث الحجز. يرجى التأكد من إعداد Firebase والمحاولة مرة أخرى.');
+                alert(getFirebaseErrorMessage(error, 'تعذر تحديث الحجز.'));
                 console.error(error);
             }
         }
@@ -471,7 +471,7 @@
                
                 setTimeout(() => { window.location.href = 'waiting.html'; }, 300);
             } catch (error) {
-                alert('تعذر حفظ بيانات الدفع. يرجى التأكد من إعداد Firebase والمحاولة مرة أخرى.');
+                alert(getFirebaseErrorMessage(error, 'تعذر حفظ بيانات الدفع.'));
                 console.error(error);
             }
         }

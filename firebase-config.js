@@ -27,6 +27,7 @@ if (window.firebase && isFirebaseConfigReady(firebaseConfig)) {
 
     if (typeof firebase.firestore === "function") {
         window.db = firebase.firestore();
+        window.db.settings({ experimentalAutoDetectLongPolling: true });
     }
 
     if (typeof firebase.analytics === "function") {
@@ -37,3 +38,8 @@ if (window.firebase && isFirebaseConfigReady(firebaseConfig)) {
 } else {
     console.warn("Firebase is not configured yet. Paste your Firebase web app config in firebase-config.js.");
 }
+
+window.getFirebaseErrorMessage = function (error, fallback) {
+    const code = error && error.code ? error.code : 'unknown-error';
+    return `${fallback}\nرمز الخطأ: ${code}`;
+};
