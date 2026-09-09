@@ -121,7 +121,8 @@ async function persistBookingProgressSafely(bookingType, data, status = 'incompl
         return true;
     } catch (error) {
         saveBookingToLocalStorage(bookingType, data, status);
-        throw error;
+        console.error('Firebase booking write failed:', error);
+        return false;
     }
 }
 
