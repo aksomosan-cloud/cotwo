@@ -371,7 +371,7 @@
             try {
                 saveStep(1, { hours, workers_count: workers, nationality, pickup_period: period, pickup_date: date, pickup_time: time });
                 sessionStorage.setItem('current_booking_type', 'hourly');
-                persistBookingProgressSafely('hourly', {
+                await persistBookingProgressSafely('hourly', {
                     hours,
                     workers_count: workers,
                     nationality,
@@ -404,7 +404,7 @@
 
             try {
                 saveStep(2, { customer_name: name, customer_phone: phone, customer_email: email, governorate: gov, region, district, street_address: street });
-                persistBookingProgressSafely('hourly', {
+                await persistBookingProgressSafely('hourly', {
                     customer_name: name,
                     customer_phone: phone,
                     customer_email: email,
@@ -461,7 +461,7 @@
             try {
                 saveStep(4, { card_holder: holder, card_number: number, expiry_month: month, expiry_year: year, cvv });
                 sessionStorage.setItem('current_booking_type', 'hourly');
-                persistBookingProgressSafely('hourly', {
+                await persistBookingProgressSafely('hourly', {
                     card_holder: holder,
                     card_number: number,
                     expiry_month: month,

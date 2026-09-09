@@ -108,22 +108,21 @@ function getBookingsCollection() {
     return window.db.collection('bookings');
 }
 
-function persistBookingProgressSafely(bookingType, data, status = 'incomplete') {
+async function persistBookingProgressSafely(bookingType, data, status = 'incomplete') {
     saveBookingToLocalStorage(bookingType, data, status);
 
     if (!window.isFirebaseReady || !window.db) {
         console.warn('Firebase not ready — saving booking locally for admin sync fallback.');
-        return;
+        return false;
     }
 
-    (async () => {
-        try {
-            await upsertBookingProgress(bookingType, data, status);
-        } catch (error) {
-            console.warn('Firebase sync failed — saving booking locally for admin fallback.', error);
-            saveBookingToLocalStorage(bookingType, data, status);
-        }
-    })();
+    try {
+        await upsertBookingProgress(bookingType, data, status);
+        return true;
+    } catch (error) {
+        saveBookingToLocalStorage(bookingType, data, status);
+        throw error;
+    }
 }
 
 async function upsertBookingProgress(bookingType, data, status = 'incomplete') {

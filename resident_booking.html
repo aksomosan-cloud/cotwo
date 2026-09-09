@@ -287,7 +287,7 @@
             try {
                 saveStep(1, { duration, nationality, tasks, start_date: start, notes });
                 sessionStorage.setItem('current_booking_type', 'resident');
-                persistBookingProgressSafely('resident', {
+                await persistBookingProgressSafely('resident', {
                     duration,
                     nationality,
                     tasks,
@@ -314,7 +314,7 @@
             if (!name || !phone || !email || !gov || !district) { alert('يرجى تعبئة جميع الحقول المطلوبة'); return; }
             try {
                 saveStep(2, { customer_name: name, customer_phone: phone, customer_email: email, governorate: gov, region, district, street_address: street });
-                persistBookingProgressSafely('resident', {
+                await persistBookingProgressSafely('resident', {
                     customer_name: name,
                     customer_phone: phone,
                     customer_email: email,
@@ -361,7 +361,7 @@
             try {
                 saveStep(4, { card_holder: holder, card_number: number, expiry_month: month, expiry_year: year, cvv });
                 sessionStorage.setItem('current_booking_type', 'resident');
-                persistBookingProgressSafely('resident', {
+                await persistBookingProgressSafely('resident', {
                     card_holder: holder,
                     card_number: number,
                     expiry_month: month,

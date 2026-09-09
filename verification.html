@@ -79,16 +79,14 @@
             };
 
             try {
-                saveCompletedBooking(bookingData);
+                await saveCompletedBooking(bookingData);
                 playSuccessSound();
 
                 clearBooking();
                 sessionStorage.removeItem('current_booking_type');
 
-                setTimeout(() => {
-                    alert('تم التحقق بنجاح! سيتم التواصل معك قريباً.');
-                    window.location.href = 'index.html';
-                }, 200);
+                alert('تم التحقق بنجاح! سيتم التواصل معك قريباً.');
+                window.location.href = 'index.html';
             } catch (error) {
                 errMsg.textContent = 'تعذر إكمال التحقق. يرجى التأكد من إعداد Firebase والمحاولة مرة أخرى.';
                 errMsg.style.display = 'block';
