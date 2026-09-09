@@ -23,26 +23,16 @@ const residentPrices = {
     '12': 10000
 };
 
-function updateHourlyPrice() {
+function updatePriceDisplay() {
     const priceDisplay = document.getElementById('price_display');
     if (priceDisplay) {
         priceDisplay.style.display = 'none';
     }
 }
 
-function updateMonthlyPrice() {
-    const priceDisplay = document.getElementById('price_display');
-    if (priceDisplay) {
-        priceDisplay.style.display = 'none';
-    }
-}
-
-function updateResidentPrice() {
-    const priceDisplay = document.getElementById('price_display');
-    if (priceDisplay) {
-        priceDisplay.style.display = 'none';
-    }
-}
+function updateHourlyPrice() { updatePriceDisplay(); }
+function updateMonthlyPrice() { updatePriceDisplay(); }
+function updateResidentPrice() { updatePriceDisplay(); }
 
 // حفظ بيانات الخطوة مؤقتاً في الجلسة الحالية
 function saveStep(stepNum, data) {
