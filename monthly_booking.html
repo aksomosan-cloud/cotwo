@@ -299,8 +299,8 @@
                 }, 'incomplete');
                 showStep(2);
             } catch (error) {
-                alert(getFirebaseErrorMessage(error, 'تعذر حفظ الحجز.'));
-                console.error(error);
+                console.warn('Booking sync failed; continuing with local data.', error);
+                showStep(2);
             }
         }
 
